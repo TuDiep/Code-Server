@@ -1,0 +1,1115 @@
+DROP DATABASE IF EXISTS APPSHOP;
+CREATE DATABASE APPSHOP;
+USE APPSHOP;
+
+CREATE TABLE LOAISANPHAM(
+	MALOAISP INT AUTO_INCREMENT,
+    TENLOAISP NVARCHAR(100),
+    MALOAI_CHA INT,
+    
+    CONSTRAINT KHOACHINH_LOAISANPHAM_MALOAI PRIMARY KEY (MALOAISP)
+);
+
+CREATE TABLE THUONGHIEU(
+	MATHUONGHIEU INT AUTO_INCREMENT,
+    TENTHUONGHIEU NVARCHAR(100),
+    HINHTHUONGHIEU TEXT,
+    LUOTMUA INT,
+    
+    CONSTRAINT KHOACHINH_THUONGHIEU_MATHUONGHIEU PRIMARY KEY (MATHUONGHIEU)
+);
+
+CREATE TABLE SANPHAM(
+	MASP INT AUTO_INCREMENT,
+    TENSP NVARCHAR(200),
+    GIA DECIMAL,
+    ANHLON TEXT,
+    ANHNHO TEXT,
+    THONGTIN TEXT,
+    SOLUONG INT,
+    MALOAISP INT,
+    MATHUONGHIEU INT,
+    MANV INT,
+    LUOTMUA INT,
+
+    
+    CONSTRAINT KHOACHINH_SANPHAM_MASP PRIMARY KEY (MASP),
+    CONSTRAINT KHOANGOAI_SANPHAM_MALOAISP FOREIGN KEY (MALOAISP) REFERENCES LOAISANPHAM (MALOAISP),
+  	CONSTRAINT KHOANGOAI_SANPHAM_MATHUONGHIEU FOREIGN KEY (MATHUONGHIEU) REFERENCES THUONGHIEU (MATHUONGHIEU)
+);
+
+CREATE TABLE LOAINHANVIEN(
+	MALOAINV INT AUTO_INCREMENT,
+    TENLOAINV NVARCHAR(20),
+    
+    CONSTRAINT KHOACHINH_LOAINHANVIEN_MALOAINV PRIMARY KEY (MALOAINV)
+);
+
+CREATE TABLE NHANVIEN(
+	MANV INT AUTO_INCREMENT,
+    TENNV NVARCHAR(100),
+    TENDANGNHAP NVARCHAR(100),
+    MATKHAU VARCHAR(100),
+    DIACHI NVARCHAR(200),
+    NGAYSINH VARCHAR(20),
+    SODT VARCHAR(20),
+    GIOITINH BOOLEAN,
+    MALOAINV INT,
+    
+    CONSTRAINT KHOACHINH_NHANVIEN_MANV PRIMARY KEY (MANV),
+    CONSTRAINT KHOANGOAI_NHANVIEN_MALOAINV FOREIGN KEY (MALOAINV) REFERENCES LOAINHANVIEN (MALOAINV)
+);
+
+CREATE TABLE KHUYENMAI(
+    MAKM INT AUTO_INCREMENT,
+    MALOAISP INT,
+    TENKM NVARCHAR (200),
+    NGAYBATDAU VARCHAR(20),
+    NGAYKETTHUC VARCHAR(20),
+    HINHKHUYENMAI TEXT,
+
+    CONSTRAINT KHOACHINH_KHUYENMAI_MAKM PRIMARY KEY (MAKM),
+    CONSTRAINT KHOANGOAI_KHUYENMAI_MALOAISP FOREIGN KEY (MALOAISP) REFERENCES LOAISANPHAM (MALOAISP)
+);
+
+CREATE TABLE CHITIETKHUYENMAI(
+    MASP INT,
+    MAKM INT,
+    PHANTRAMKM INT(2),
+    
+    CONSTRAINT KHOACHINH_CHITIETKHUYENMAI_MASP_MAKM PRIMARY KEY (MASP,MAKM),
+    CONSTRAINT KHOANGOAI_CHIETIETKUYENMAI_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP),
+    CONSTRAINT KHOANGOAI_CHITIETKHUYENMAI_MAKM FOREIGN KEY (MAKM) REFERENCES KHUYENMAI (MAKM)
+);
+
+CREATE TABLE BINHLUAN(
+	MABL INT AUTO_INCREMENT,
+    TIEUDE NVARCHAR(200),
+    
+    CONSTRAINT KHOACHINH_BINHLUAN_MABL PRIMARY KEY (MABL)
+);
+
+CREATE TABLE CHITIETBINHLUAN(
+	MABL INT,
+    MANV INT,
+    MASP INT,
+    NOIDUNG TEXT,
+    NGAYBL VARCHAR(20),
+    
+    CONSTRAINT KHOACHINH_CHITIETBINHLUAN_MABL_MANV_MASP PRIMARY KEY (MABL,MANV,MASP),
+    CONSTRAINT KHOANGOAI_CHITIETBINHLUAN_MABL FOREIGN KEY (MABL) REFERENCES BINHLUAN (MABL),
+    CONSTRAINT KHOANGOAI_CHITIETBINHLUAN_MANV FOREIGN KEY (MANV) REFERENCES NHANVIEN (MANV),
+    CONSTRAINT KHOANGOAI_CHITIETBINHLUAN_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP)
+);
+
+CREATE TABLE CHITIETTHUONGHIEU(
+    MATHUONGHIEU INT,
+    MALOAISP INT,
+    HINHTHUONGHIEU TEXT,
+    
+    CONSTRAINT KHOACHINH_CHITIETTHUONGHIEU_MATHUONGHIEU_MALOAISP PRIMARY KEY (MATHUONGHIEU,MALOAISP),
+    CONSTRAINT KHOANGOAI_CHITIETTHUONGHIEU_MATHUONGHIEU FOREIGN KEY (MATHUONGHIEU) REFERENCES THUONGHIEU (MATHUONGHIEU),
+    CONSTRAINT KHOANGOAI_CHITIETTHUONGHIEU_MALOAISP FOREIGN KEY (MALOAISP) REFERENCES LOAISANPHAM (MALOAISP)
+);
+
+CREATE TABLE CHITIETSANPHAM(
+    MACHITIETSP INT AUTO_INCREMENT,
+    MASP INT,
+    TENCHITIET INT,
+    GIATRI TEXT,
+    
+    CONSTRAINT KHOACHINH_CHITIETSANPHAM_MASP PRIMARY KEY (MACHITIETSP),
+    CONSTRAINT KHOANGOAI_DCHITIETSANPHAM_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP)
+);
+
+CREATE TABLE DANHGIA(
+	MADG VARCHAR(50),
+	MASP INT,
+	TENTHIETBI TEXT,
+	TIEUDE TEXT,
+	NOIDUNG TEXT,
+	SOSAO INT(1),
+	NGAYDANHGIA VARCHAR(50),
+	
+	CONSTRAINT KHOACHINH_DANHGIA_MADG PRIMARY KEY (MADG),
+    	CONSTRAINT KHOANGOAI_DANHGIA_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP)
+);
+
+CREATE TABLE HOADON(
+	MAHD INT AUTO_INCREMENT,
+	NGAYMUA TEXT,
+	NGAYGIAO TEXT,
+	TRANGTHAI VARCHAR(20),
+	TENNGUOINHAN VARCHAR(50),
+	SODT TEXT,
+	DIACHI TEXT,
+	CHUYENKHOAN BOOLEAN,
+	MACHUYENKHOAN TEXT,
+
+	CONSTRAINT KHOACHINH_HOADON_MAHD PRIMARY KEY (MAHD)
+    	
+);
+
+CREATE TABLE CHITIETHOADON(
+	MAHD INT,
+	MASP INT,
+	SOLUONG INT, 
+
+	CONSTRAINT KHOACHINH_CHITIETHOADON_MAHD_MASP PRIMARY KEY (MAHD,MASP),
+    	CONSTRAINT KHOANGOAI_CHITIETHOADON_MAHD FOREIGN KEY (MAHD) REFERENCES HOADON (MAHD),
+	CONSTRAINT KHOANGOAI_CHITIETHOADON_MASP FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP)
+);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Điện thoại & Máy tính bảng",0);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Điện thoại di động",1);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tính bảng",1);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Điện thoại bàn",1);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện điện thoại & máy tính bảng",1);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ốp lưng và bao da điện thoại",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Miếng dán màn hình điện thoại",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện di động trên xe hơi",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện khác",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Cáp & Dock sạc",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Linh kiện & Dụng cụ",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("SIM & Thẻ cào",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Pin và bộ sạc",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện máy tính bảng",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Pin sạc dự phòng",5);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện camera điện thoại",5);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nhà cửa & Đời sống",0);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bếp phòng ăn",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dụng cụ làm bánh",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dụng cụ nấu ăn",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đồ dùng bàn ăn",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đồ dùng uống trà và cà phê",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dao nấu bếp",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Khăn trải bàn & Phụ kiện bằng vải",18);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện & Dụng cụ nhà bếp",18);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đồ dùng phòng ngủ",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bộ chăn và ga giường gối",26);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Gối",26);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện giường ngủ",26);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bộ chăn ra gối nệm",26);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ga giường",26);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nệm và Vỏ nệm",26);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đồ nội thất",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất phòng ngủ",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất phòng khách",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất bếp & Phòng ăn",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất phòng trẻ em",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất phòng làm việc tại gia",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất cho hành lang & lối vào",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất phòng trang trí",33);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nội thất kiểu cổ",33);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Tân trang nhà cửa",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Kho chứa dụng cụ và Garage",42);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Điện",42);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Cổng và Hàng rào",42);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bảo vệ và An toàn",42);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ống nước",42);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy vi tính & Laptop",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Laptop",48);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dòng giải trí",49);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Macbooks",49);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ultrabooks",49);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị lưu trữ",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ổ cứng SSD",53);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ổ cứng gắn ngoài",53);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ổ cứng gắn trong",53);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("USB lưu trữ",53);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy in & Phụ kiện",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy in",58);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Kệ máy in",58);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy Fax",58);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Mực in",58);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Chăm sóc sức khỏe & làm đẹp",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Trang điểm",63);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Mặt",64);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Môi",64);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Mắt",64);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Tẩy trang",64);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Chăm sóc mặt",63);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Mặt nạ đắp",69);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Sữa rữa mặt",69);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thể thao",17);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Yaga & Thể hình",72);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Yoga",73);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể hình",73);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể lực",73);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Giày & Trang phục",72);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dành cho nữ",77);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dành cho nam",77);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dành cho bé",77);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thời trang",0);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("TV- VideoÂm - ThanhGame & Thiết Bị Số",0);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Tivi",82);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dưới 24 inches",83);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("25-32 inches",83);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("33-42 inches",83);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("43-54 inches",83);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Trên 55 inches",83);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Tivi giá đặc biệt cho các tỉnh, thành lớn",83);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị âm thanh",82);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Các loại tai nghe",90);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Loa di động",90);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dàn âm thanh giải trí",90);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy nghe nhạc",90);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Video",82);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị trình chiếu",95);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị streaming",95);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị chơi game",82);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Xbox",98);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Nitendo",98);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị đeo công nghệ",82);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đồng hồ thông minh",101);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị theo dõi sức khỏe & vận động",101);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Mắt kính thông minh",101);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị giám sát thông minh",102);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thể thao & du lịch",0);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Các loại bài tập & thể hình",106);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể hình",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể lực",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Tạ",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Yoga",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Pilates",107);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Đấm bốc, Võ thuật & Đánh MMA",107);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thể tao đồng đội",106);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể hình",115);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Máy tập thể hình",115);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bóng đá",115);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bóng rổ",115);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bóng chuyền",115);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Hoạt động dã ngoại",106);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Xe đạp",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dã ngoại & leo núi",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Câu cá",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Xe Scooters",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Trượt băng trong nhà",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Trượt ván",121);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bơi lội",121);
+
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Xe máy và bách hóa",0);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Ô tô & xe máy",129);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Chăm sóc ô tô & xe máy",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện bên ngoài",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện bên trong",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Link kiện thay thế",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị giám định ô tô",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Xe mô tô & xe địa hình",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dầu nhớt",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Sơn sửa",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Phụ kiện xe tải",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Dụng cụ và thiết bị",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Bánh & vỏ xe",130);
+INSERT INTO `loaisanpham`(`TENLOAISP`, `MALOAI_CHA`) VALUES ("Thiết bị định vị",130);
+
+
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Apple",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Nokia",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Samsung",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Xiaomi",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Asus",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Lenovo",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Oppo",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Sony",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("HTC",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Dell",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("HP",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Scandisk",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Silicon",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Canon",0);
+INSERT INTO `thuonghieu`(`TENTHUONGHIEU`, `LUOTMUA`) VALUES ("Microsoft",0);
+
+
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (1,2,"/hinhthuonghieu/apple.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (1,49,"/hinhthuonghieu/macbook.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (2,1,"/hinhthuonghieu/nokia.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (3,1,"/hinhthuonghieu/samsung.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (4,1,"/hinhthuonghieu/xiaomi.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (5,1,"/hinhthuonghieu/asus.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (6,1,"/hinhthuonghieu/lenovo.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (6,49,"/hinhthuonghieu/latoplenovo.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (7,1,"/hinhthuonghieu/oppo.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (8,1,"/hinhthuonghieu/sony.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (9,1,"/hinhthuonghieu/htc.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (10,49,"/hinhthuonghieu/dell.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (11,1,"/hinhthuonghieu/hp.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (12,1,"/hinhthuonghieu/scandisk.png");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (13,1,"/hinhthuonghieu/silicon.jpg");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (14,1,"/hinhthuonghieu/canon.jpg");
+INSERT INTO `chitietthuonghieu`(`MATHUONGHIEU`,`MALOAISP`,`HINHTHUONGHIEU`) VALUES (15,49,"/hinhthuonghieu/microsoft.jpg");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,1,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (1,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng hồng)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,1,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (2,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,1,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (3,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (4,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (5,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (6,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (7,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (8,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (9,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,2,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (10,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Apple Iphone 6s Plus 16GB (Vàng gold)",13960000,"/hinhsanpham/iphone6spluse.png","/hinhsanpham/iphone6spluse1.jpg,/hinhsanpham/iphone6spluse2.jpg,/hinhsanpham/iphone6spluse3.png,/hinhsanpham/iphone6spluse4.jpg","Là hàng được nhập khẩu trực tiếp từ nước ngoài bởi doanh nghiệp trong nước, không thông qua nhà phân phối chính thức tại thị trường Việt Nam.
+Hàng nhập khẩu được nhiều người chọn lựa bởi giá thành tốt, chất lượng vẫn được đảm bảo như những sản phẩm được nhập khẩu thông qua nhà phân phối chính thức (vì được sản xuất từ cùng một nhà máy của hãng sản xuất). Hơn nữa, dù không được bảo hành tại các trung tâm bảo hành chính thức của hãng, các sản phẩm này vẫn được áp dụng đầy đủ chính sách bảo hành của doanh nghiệp nhập khẩu",10,49,1,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (11,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Pin sạc dự phòng Asus Zenpower 10.050mAh (Vàng) ",339000,"/hinhsanpham/pinsacduphongasus.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,13,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (12,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Bao da kiêm bàn phím cho máy tính bảng 7 inch ( Đen)  ",98000,"/hinhsanpham/baodabanphimmaytinhbang7ich.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,14,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (13,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Gậy chụp hình Selfie Stick (Đen phối vàng) ",36000,"/hinhsanpham/gaychuphinhtusuong.png","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,16,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (14,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Bộ Miếng dán cường lực và ốp lưng cho iPhone 6 - NVPro 30306 (Trong suốt)  ",86000,"/hinhsanpham/mieng-gian-cuong-luc-iphone-6-6s.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,7,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (15,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Đế kẹp smartphone cho điện thoại",36000,"/hinhsanpham/dekepsmartphonechodienthoai.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,8,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (16,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Sim 3G tài khoản 600 MB",106000,"/hinhsanpham/sim3gtaikhoan600.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,12,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (17,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Ổ cắm thông minh Xiaomi Mi Power Strips (Trắng) ",166000,"/hinhsanpham/o-cam-thong-minh-xiaomi.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,11,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (18,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Giá đỡ điện thoại cho tay cầm chơi Game Terios T-3 ( Đen)  ",99000,"/hinhsanpham/taycamchoigame.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,11,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (19,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Tivi LED Arirang 24inch HD - Model AR-2488F (Đen)",2439000,"/hinhsanpham/tiviled24inchesariang.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,84,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (20,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Tivi LED LG 42inch 42LF550T Full HD (Đen)  ",6939000,"/hinhsanpham/tiviled42inches.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,85,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (21,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Smart Tivi LED LG 55inch Full HD - Model 55LH575T (Đen)",17000000,"/hinhsanpham/tiviled55inches.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,87,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (22,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Load Bluetooth SUNTEK S204 (Đen) ",269000,"/hinhsanpham/sony-electronics-hd-radio.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,92,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (23,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Tai nghe chụp tai Ovann X1 Gaming (Đen phối Xanh) ",60000,"/hinhsanpham/tai-nghe-chup-tai-ovann-x1-gaming-den-phoi-xanh_5235588062018469161_300.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,91,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (24,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Dàn âm thanh Samsung HT-E350K 5.1 330W (Đen) ",1760000,"/hinhsanpham/vish-dvd-ht-e350k-2.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,93,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (25,"Bảo hành","12 tháng");
+
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Máy nghe nhạc MP3 NVPro Minion (Xanh dương) ",40000,"/hinhsanpham/may-nghe-nhac-mp3-nvpro-minion-xanh-duong-8610-6315961-e77b808c5237d08a940e6fe597050469-catalog_233.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,94,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (26,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Máy chiếu mini cho điện thoại (Nâu)  ",169999,"/hinhsanpham/may-chieu-mini-cho-dien-thoai-nau-9973-9001242-168928dd2df3fa0fae4f2c453b3e8620-catalog_233.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,96,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Thiết bị Android TV box MXQ S805 (Đen) ",429300,"/hinhsanpham/20160530150209551.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,97,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (27,"RAM memory","2GB");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Tay cầm chơi game Xbox One Controller và Wireless Adapter for PC (Đen)",1549000,"/hinhsanpham/36743763_palaciodehierro_wirelesscontrollerc35mmone_xbox_vista_1.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,99,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (28,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Máy chơi games Nintendo Wii +HDD 500 GB (Full Games) (Đen) ",5999000,"/hinhsanpham/23. WII CONSOLE BLACK W WII REMOTE PLUS _ NUNCHUCK (UPC 045496880675).jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,100,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (29,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Đồng hồ thông minh Smart Watch Uwatch DZ09 (Bạc) ",302676000,"/hinhsanpham/res_50df6f16088731d12e6c6698c47231e4_1200x1200c_mttq.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,102,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (30,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Vòng đeo tay Xiaomi Miband 2 (Đen)  ",819000,"/hinhsanpham/sh-02-a.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,103,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (31,"Bảo hành","12 tháng");
+
+INSERT INTO `sanpham`(`TENSP`,`GIA`,`ANHLON`,`ANHNHO`,`THONGTIN`,`SOLUONG`,`MALOAISP`,`MATHUONGHIEU`,`MANV`,`LUOTMUA`) VALUES ("Bút ghi âm chuyên nghiệp 8 GB (Đen) ",612000,"/hinhsanpham/130814225508442671.jpg","","Asus ZenPower là viên pin sạc chính hãng hiếm hoi đến từ một nhà sản xuất điện thoại khá lớn ở Việt Nam. Hiện tại ZenPower có khá nhiều màu khác nhau, từ hồng đẹp trai đến màu đen yếu đuối. Hiện tại thì mình mượn được màu hồng mạnh mẽ và vàng sang chảnh để trên tay. Asus có bán các miếng bảo vệ cao su nhiều màu cho pin nhưng không rõ có được phân phối ở Việt Nam hay không.",10,104,5,2,0);
+
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"3D TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Camera Back","11 - 15 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Camera Front","5 - 6 MP");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Điều kiện","Mới");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Curved TV","No");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Kích thước màn hình","4.7");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Mẫu mã","6s");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Network Connections","3G-HSPA|4G-LTE");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Hệ điều hành","IOS");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Operation System Version","IOS9");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Trọng lượng (KG)","0.2");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Sản xuất tại","Trung quốc");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"RAM memory","2GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Sim type","SIM nano");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Sim Slots","1");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Bộ nhớ trong","64GB");
+INSERT INTO `chitietsanpham` (`MASP`,`TENCHITIET`,`GIATRI`) VALUES (32,"Bảo hành","12 tháng");
+
+
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenapple.jpg' WHERE `MATHUONGHIEU` = 1;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tennokia.png' WHERE `MATHUONGHIEU` = 2;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tensamsung.png' WHERE `MATHUONGHIEU` = 3;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenxiaomi.png' WHERE `MATHUONGHIEU` = 4;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenasus.png' WHERE `MATHUONGHIEU` = 5;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenlenovo.png' WHERE `MATHUONGHIEU` = 6;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenoppo.png' WHERE `MATHUONGHIEU` = 7;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tensony.png' WHERE `MATHUONGHIEU` = 8;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenhtc.png' WHERE `MATHUONGHIEU` = 9;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tendell.png' WHERE `MATHUONGHIEU` = 10;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenhp.png' WHERE `MATHUONGHIEU` = 11;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tensandisk.png' WHERE `MATHUONGHIEU` = 12;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tensilicon.png' WHERE `MATHUONGHIEU` = 13;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tencannon.png' WHERE `MATHUONGHIEU` = 14;
+UPDATE 	`thuonghieu` set `HINHTHUONGHIEU` = 'hinhthuonghieu/tenmicrosoft.png' WHERE `MATHUONGHIEU` = 15;
+
+
+INSERT INTO `khuyenmai` (`MALOAISP`,`TENKM`,`NGAYBATDAU`,`NGAYKETTHUC`,`HINHKHUYENMAI`) VALUES (2,"Xã hàng hot đến 49%","2016/9/12","2016/10/12","/hinhkhuyenmai/con loc giam gia mua he.png");
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (1,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (2,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (3,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (4,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (5,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (6,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (7,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (8,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (9,1,49);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (10,1,49);
+
+INSERT INTO `khuyenmai` (`MALOAISP`,`TENKM`,`NGAYBATDAU`,`NGAYKETTHUC`,`HINHKHUYENMAI`) VALUES (2,"Giải nhiệt mùa hè giảm ngay 50%","2016/9/12","2016/10/12","/hinhkhuyenmai/khuyen mai ta quan ta dan.jpg");
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (11,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (12,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (13,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (14,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (15,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (16,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (17,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (18,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (19,2,50);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (20,2,50);
+
+INSERT INTO `khuyenmai` (`MALOAISP`,`TENKM`,`NGAYBATDAU`,`NGAYKETTHUC`,`HINHKHUYENMAI`) VALUES (2,"Hè này mua gì ?","2016/9/12","2016/10/12","/hinhkhuyenmai/du lich.jpg");
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (21,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (22,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (23,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (24,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (25,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (26,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (27,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (28,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (29,3,40);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (30,3,40);
+
+INSERT INTO `khuyenmai` (`MALOAISP`,`TENKM`,`NGAYBATDAU`,`NGAYKETTHUC`,`HINHKHUYENMAI`) VALUES (3,"Festival salve !","2016/9/12","2016/10/12","/hinhkhuyenmai/festival sale 90.jpg");
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (21,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (22,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (23,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (24,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (25,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (26,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (27,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (28,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (29,4,30);
+INSERT INTO `chitietkhuyenmai` (`MASP`,`MAKM`,`PHANTRAMKM`) VALUES (30,4,30);
